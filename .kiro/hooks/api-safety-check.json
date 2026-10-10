@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "API Safety Check",
+      "trigger": "PostFileSave",
+      "action": {
+        "type": "agent",
+        "prompt": "Check this API route: it must never expose API keys to the client, must return friendly JSON errors, must use the key fallback in lib/gemini.ts, and must match the response schema in tech.md. Fix any problems."
+      },
+      "description": "Checks every API route for key leaks and errors",
+      "matcher": "app[\\\\/]api[\\\\/].*\\.ts$",
+      "enabled": true
+    }
+  ]
+}
