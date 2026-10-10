@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ScanLine, ChevronRight, Users, AlertCircle } from "lucide-react";
+import { ScanLine, ChevronRight, Users, AlertCircle, FileSpreadsheet } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
 import { PageHeader } from "@/components/PageHeader";
 import { PageLoader } from "@/components/PageLoader";
@@ -11,7 +11,8 @@ import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
 import { Button } from "@/components/Button";
 import { getActiveShop, getCustomers, getLedgerEntries, computeTrustScore } from "@/lib/storage";
-import type { Customer, ShopProfile } from "@/lib/types";
+import { buildLedgerCsv, downloadCsv } from "@/lib/csv";
+import type { Customer, LedgerEntry, ShopProfile } from "@/lib/types";
 
 interface CustomerWithScore extends Customer {
   trustLabel: "Reliable" | "Watch" | "High Risk";
@@ -21,6 +22,8 @@ export default function LedgerPage() {
   const router = useRouter();
   const [shop, setShop] = useState<ShopProfile | null>(null);
   const [customers, setCustomers] = useState<CustomerWithScore[]>([]);
+  const [allCustomers, setAllCustomers] = useState<Customer[]>([]);
+  const [entries, setEntries] = useState<LedgerEntry[]>([]);
   const [totalOwed, setTotalOwed] = useState(0);
   const [ready, setReady] = useState(false);
 
@@ -32,11 +35,13 @@ export default function LedgerPage() {
     }
     setShop(profile);
     const all = getCustomers(profile.id);
-    const entries = getLedgerEntries(profile.id);
+    const ledgerEntries = getLedgerEntries(profile.id);
+    setAllCustomers(all);
+    setEntries(ledgerEntries);
     const withScores: CustomerWithScore[] = all
       .filter((c) => c.totalOwed > 0 || c.lastEntryDate)
       .map((c) => {
-        const ce = entries.filter((e) => e.customerId === c.id);
+        const ce = ledgerEntries.filter((e) => e.customerId === c.id);
         const trust = computeTrustScore(c, ce);
         return { ...c, trustLabel: trust.label };
       })
@@ -49,6 +54,14 @@ export default function LedgerPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  function handleExport() {
+    if (!shop) return;
+    const csv = buildLedgerCsv(entries, allCustomers);
+    const safeName = shop.shopName.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
+    const date = new Date().toISOString().slice(0, 10);
+    downloadCsv(`${safeName || "nigraan"}-ledger-${date}.csv`, csv);
+  }
 
   if (!ready) return <PageLoader />;
 
@@ -85,6 +98,13 @@ export default function LedgerPage() {
           </p>
         </Card>
       </div>
+      {entries.length > 0 && (
+        <div style={{ padding: "4px 16px 8px" }}>
+          <Button variant="secondary" size="sm" fullWidth onClick={handleExport}>
+            <FileSpreadsheet size={16} /> Export to Excel
+          </Button>
+        </div>
+      )}
       <div style={{ padding: "8px 16px" }}>
         {customers.length === 0 ? (
           <div style={{ textAlign: "center", padding: "60px 24px" }}>

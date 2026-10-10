@@ -90,6 +90,28 @@ export default function ScanPage() {
     }
   }, []);
 
+  const handleSample = useCallback(
+    async (fileName: string) => {
+      setScanState("scanning");
+      setErrorMsg("");
+      setEntries([]);
+      try {
+        const res = await fetch(`/samples/${fileName}`);
+        if (!res.ok) throw new Error("sample not found");
+        const blob = await res.blob();
+        const type = blob.type || "image/jpeg";
+        // Wrap the sample image in a File so it goes through the exact same
+        // flow as a user upload.
+        const file = new File([blob], fileName, { type });
+        await handleFile(file);
+      } catch {
+        setErrorMsg("Could not load the sample page. Please try again.");
+        setScanState("error");
+      }
+    },
+    [handleFile]
+  );
+
   function updateEntry(key: string, field: keyof ScannedEntry, value: unknown) {
     setEntries((prev) =>
       prev.map((e) => (e._key === key ? { ...e, [field]: value } : e))
@@ -201,6 +223,26 @@ export default function ScanPage() {
             disabled={scanState === "scanning"}
             previewUrl={scanState === "idle" ? null : previewUrl}
           />
+        )}
+
+        {/* Sample pages — only in the idle (pre-scan) state */}
+        {scanState === "idle" && (
+          <div>
+            <p style={{ margin: "0 0 10px", fontSize: "13px", fontWeight: 600, color: "#6b7280" }}>
+              No register handy? Try a sample page
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <Button variant="ghost" size="sm" fullWidth onClick={() => handleSample("page1.jpg")}>
+                Sample page 1
+              </Button>
+              <Button variant="ghost" size="sm" fullWidth onClick={() => handleSample("page2.jpg")}>
+                Sample page 2
+              </Button>
+              <Button variant="ghost" size="sm" fullWidth onClick={() => handleSample("page3.jpg")}>
+                Sample page 3 (suspicious entry)
+              </Button>
+            </div>
+          </div>
         )}
 
         {/* Error state */}
