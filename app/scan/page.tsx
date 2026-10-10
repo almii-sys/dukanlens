@@ -15,7 +15,10 @@ import {
   saveLedgerEntries,
   findOrCreateCustomer,
   generateId,
+  getLedgerEntries,
+  getCustomers,
 } from "@/lib/storage";
+import { detectAnomalies, countFlaggedAmong } from "@/lib/anomaly";
 import type { ScannedEntry, LedgerEntry, ConfidenceLevel } from "@/lib/types";
 
 type ScanState = "idle" | "scanning" | "done" | "error";
@@ -34,6 +37,7 @@ export default function ScanPage() {
   const [pageNotes, setPageNotes] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [flaggedCount, setFlaggedCount] = useState(0);
 
   const handleFile = useCallback(async (file: File) => {
     setSaved(false);
@@ -103,6 +107,7 @@ export default function ScanPage() {
     setScanState("idle");
     setErrorMsg("");
     setEntries([]);
+    setFlaggedCount(0);
   }
 
   async function handleSave() {
@@ -137,6 +142,14 @@ export default function ScanPage() {
     });
 
     saveLedgerEntries(shop.id, ledgerEntries);
+
+    // Run a local anomaly check over the full ledger and count how many of
+    // the entries we just added were flagged.
+    const allEntries = getLedgerEntries(shop.id);
+    const allCustomers = getCustomers(shop.id);
+    const flags = detectAnomalies(allEntries, allCustomers);
+    setFlaggedCount(countFlaggedAmong(flags, ledgerEntries.map((e) => e.id)));
+
     setSaving(false);
     setSaved(true);
   }
@@ -364,9 +377,17 @@ export default function ScanPage() {
               <Card style={{ padding: "20px", textAlign: "center", border: "1px solid #6ee7b7", backgroundColor: "#f0fdf4" }}>
                 <CheckCircle2 size={32} color="#059669" style={{ margin: "0 auto 8px" }} />
                 <p style={{ margin: "0 0 4px", fontWeight: 700, color: "#065f46", fontSize: "16px" }}>Entries saved</p>
-                <p style={{ margin: "0 0 16px", fontSize: "13px", color: "#047857" }}>
+                <p style={{ margin: flaggedCount > 0 ? "0 0 12px" : "0 0 16px", fontSize: "13px", color: "#047857" }}>
                   {includedCount} entries added to your ledger.
                 </p>
+                {flaggedCount > 0 && (
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", margin: "0 0 16px", padding: "10px 12px", backgroundColor: "#fff3e0", border: "1px solid #f4c27f", borderRadius: "10px", textAlign: "left" }}>
+                    <AlertCircle size={16} color="#b45309" style={{ flexShrink: 0 }} />
+                    <span style={{ fontSize: "13px", color: "#8a5a1a", fontWeight: 500 }}>
+                      {flaggedCount} item{flaggedCount !== 1 ? "s" : ""} need review. See Alerts on Home.
+                    </span>
+                  </div>
+                )}
                 <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
                   <Link href="/ledger">
                     <Button variant="primary" size="sm">View Ledger</Button>
