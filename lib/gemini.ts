@@ -9,7 +9,11 @@ const MODELS = [
   process.env.GEMINI_MODEL,
   "gemini-3.8-flash",
   "gemini-flash-latest",
-].filter(Boolean) as string[];
+  "gemini-flash-lite-latest",
+  "gemini-2.5-flash",
+].filter((m, i, a) => m && a.indexOf(m) === i) as string[];
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 function extractJson(text: string): unknown {
   const cleaned = text.replace(/```json/gi, "").replace(/```/g, "").trim();
@@ -18,22 +22,34 @@ function extractJson(text: string): unknown {
   return JSON.parse(cleaned.slice(start, end + 1));
 }
 
+function isBusy(err: unknown): boolean {
+  const msg = String((err as Error)?.message ?? err);
+  return msg.includes("503") || msg.includes("UNAVAILABLE") || msg.includes("high demand") || msg.includes("429");
+}
+
 async function callWithKey(apiKey: string, parts: GeminiPart[]): Promise<unknown> {
   const ai = new GoogleGenAI({ apiKey });
   let lastErr: unknown;
   for (const model of MODELS) {
-    try {
-      const response = await ai.models.generateContent({
-        model,
-        contents: [{ role: "user", parts }],
-        config: { responseMimeType: "application/json" },
-      });
-      const text = (response as unknown as { text?: string }).text;
-      if (!text) throw new Error("Empty response from Gemini");
-      return extractJson(text);
-    } catch (err) {
-      console.warn(`[gemini] model ${model} failed:`, (err as Error)?.message);
-      lastErr = err;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents: [{ role: "user", parts }],
+          config: { responseMimeType: "application/json" },
+        });
+        const text = (response as unknown as { text?: string }).text;
+        if (!text) throw new Error("Empty response from Gemini");
+        return extractJson(text);
+      } catch (err) {
+        lastErr = err;
+        console.warn(`[gemini] ${model} attempt ${attempt + 1} failed:`, (err as Error)?.message?.slice(0, 160));
+        if (isBusy(err) && attempt === 0) {
+          await sleep(1500);
+          continue;
+        }
+        break;
+      }
     }
   }
   throw lastErr;
