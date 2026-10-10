@@ -1,7 +1,7 @@
 ﻿"use client";
 
-import React, { useEffect, useState, use } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState, Suspense } from "react";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import {
   ChevronLeft, Phone, MessageCircle, CreditCard,
@@ -18,18 +18,23 @@ import {
 } from "@/lib/storage";
 import type { Customer, LedgerEntry, TrustScore, ShopProfile } from "@/lib/types";
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
-
 function buildWhatsAppMessage(customer: Customer, shopName: string) {
-  const roman = `Assalam o Alaikum ${customer.name} bhai,\n\nUmeed hai aap theek honge. ${shopName} ki taraf se aapka Rs ${customer.totalOwed.toLocaleString()} ka balance pending hai.\n\nKripaya jaldi payment ka intazam karein. Shukriya! 🙏`;
-  const urdu = `السلام علیکم ${customer.name}،\n\n${shopName} کی طرف سے آپ کا Rs ${customer.totalOwed.toLocaleString()} باقی ہے۔ براہ کرم جلد ادائیگی کریں۔ شکریہ`;
-  return { roman, urdu };
+  const english = `Hello ${customer.name},\n\nI hope you are well. This is a friendly reminder from ${shopName}: your outstanding balance is Rs ${customer.totalOwed.toLocaleString()}.\n\nPlease arrange the payment at your earliest convenience. Thank you!`;
+  const urdu = `السلام علیکم ${customer.name}،\n\n${shopName} کی طرف سے یاد دہانی: آپ کا باقی بیلنس Rs ${customer.totalOwed.toLocaleString()} ہے۔ براہ کرم جلد ادائیگی کریں۔ شکریہ`;
+  return { english, urdu };
 }
 
-export default function CustomerDetailPage({ params }: Props) {
-  const { id } = use(params);
+export default function CustomerDetailPage() {
+  return (
+    <Suspense fallback={<div className="page-content" style={{ backgroundColor: "var(--color-cream)" }} />}>
+      <CustomerDetailContent />
+    </Suspense>
+  );
+}
+
+function CustomerDetailContent() {
+  const params = useParams<{ id: string }>();
+  const id = params.id;
   const router = useRouter();
 
   const [shop, setShop] = useState<ShopProfile | null>(null);
@@ -49,8 +54,8 @@ export default function CustomerDetailPage({ params }: Props) {
 
   // Reminder
   const [reminderPhone, setReminderPhone] = useState("");
-  const [reminderMsg, setReminderMsg] = useState<{ roman: string; urdu: string } | null>(null);
-  const [activeMsg, setActiveMsg] = useState<"roman" | "urdu">("roman");
+  const [reminderMsg, setReminderMsg] = useState<{ english: string; urdu: string } | null>(null);
+  const [activeMsg, setActiveMsg] = useState<"english" | "urdu">("english");
 
   function reload() {
     const profile = getActiveShop();
@@ -108,7 +113,7 @@ export default function CustomerDetailPage({ params }: Props) {
 
   function openWhatsApp() {
     if (!reminderMsg || !shop || !customer) return;
-    const text = activeMsg === "roman" ? reminderMsg.roman : reminderMsg.urdu;
+    const text = activeMsg === "english" ? reminderMsg.english : reminderMsg.urdu;
     const phone = reminderPhone.replace(/\D/g, "").replace(/^0/, "92");
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank", "noopener,noreferrer");
@@ -231,7 +236,7 @@ export default function CustomerDetailPage({ params }: Props) {
                   }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ margin: "0 0 2px", fontSize: "14px", fontWeight: 500, color: "var(--color-charcoal)" }}>
-                      {entry.note ?? (entry.type === "credit" ? "Udhaar" : "Payment received")}
+                      {entry.note ?? (entry.type === "credit" ? "Credit given" : "Payment received")}
                     </p>
                     <p style={{ margin: 0, fontSize: "12px", color: "#9ca3af" }}>
                       {entry.date ? new Date(entry.date).toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" }) : "No date"}
@@ -292,7 +297,7 @@ export default function CustomerDetailPage({ params }: Props) {
         <ModalOverlay onClose={() => setShowPhonePrompt(false)}>
           <h2 style={{ margin: "0 0 4px", fontSize: "18px", fontWeight: 700 }}>Phone number?</h2>
           <p style={{ margin: "0 0 20px", fontSize: "14px", color: "#6b7280" }}>
-            {customer.name} ka WhatsApp number daalen — hum yaad rakh lenge.
+            Enter {customer.name}&apos;s WhatsApp number — we&apos;ll remember it.
           </p>
           <label style={modalLabelStyle}>WhatsApp Number</label>
           <input
@@ -317,12 +322,12 @@ export default function CustomerDetailPage({ params }: Props) {
         <ModalOverlay onClose={() => setShowReminder(false)}>
           <h2 style={{ margin: "0 0 4px", fontSize: "18px", fontWeight: 700 }}>Send Reminder</h2>
           <p style={{ margin: "0 0 16px", fontSize: "14px", color: "#6b7280" }}>
-            WhatsApp par yeh message jayega:
+            This message will be sent on WhatsApp:
           </p>
 
           {/* Tab toggle */}
           <div style={{ display: "flex", gap: "0", marginBottom: "12px", border: "1px solid #e5e7eb", borderRadius: "8px", overflow: "hidden" }}>
-            {(["roman", "urdu"] as const).map((tab) => (
+            {(["english", "urdu"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveMsg(tab)}
@@ -338,7 +343,7 @@ export default function CustomerDetailPage({ params }: Props) {
                   transition: "background 0.15s",
                 }}
               >
-                {tab === "roman" ? "Roman Urdu" : "اردو"}
+                {tab === "english" ? "English" : "اردو"}
               </button>
             ))}
           </div>
@@ -358,7 +363,7 @@ export default function CustomerDetailPage({ params }: Props) {
             maxHeight: "160px",
             overflowY: "auto",
           }}>
-            {activeMsg === "roman" ? reminderMsg.roman : reminderMsg.urdu}
+            {activeMsg === "english" ? reminderMsg.english : reminderMsg.urdu}
           </div>
 
           <p style={{ margin: "0 0 14px", fontSize: "12px", color: "#9ca3af" }}>

@@ -28,18 +28,18 @@ export default function HomePage() {
   if (!ready) return null;
 
   const actions = [
-    { href: "/scan", icon: ScanLine, title: "Scan Ledger", sub: "Register ki photo se digital khata", color: "var(--color-teal)", bg: "#e0f2f2" },
-    { href: "/stock", icon: Package, title: "Scan Shelf", sub: "Shelf ki photo se restock order", color: "var(--color-saffron)", bg: "#fef3e0" },
-    { href: "/ledger", icon: BookOpen, title: "View Ledger", sub: "Customers, udhaar aur reminders", color: "var(--color-charcoal)", bg: "#eef0f1" },
+    { href: "/scan", icon: ScanLine, title: "Scan Ledger", sub: "Turn a register photo into a digital ledger", color: "var(--color-teal)", bg: "#e0f2f2" },
+    { href: "/stock", icon: Package, title: "Scan Shelf", sub: "Turn a shelf photo into a restock order", color: "var(--color-saffron)", bg: "#fef3e0" },
+    { href: "/ledger", icon: BookOpen, title: "View Ledger", sub: "Customers, credit and reminders", color: "var(--color-charcoal)", bg: "#eef0f1" },
   ];
 
   return (
     <div className="page-content" style={{ backgroundColor: "var(--color-cream)" }}>
-      <PageHeader title="DukaanLens" shopName={shop?.shopName} />
+      <PageHeader title="Nigraan" shopName={shop?.shopName} />
       <div style={{ padding: "20px 16px", display: "flex", flexDirection: "column", gap: "14px" }}>
         <div>
-          <p style={{ margin: "0 0 4px", fontSize: "14px", color: "#6b7280" }}>Assalam o Alaikum{shop?.ownerName ? ", " + shop.ownerName : ""}</p>
-          <h1 style={{ margin: 0, fontSize: "24px", fontWeight: 800, color: "var(--color-charcoal)" }}>Bas photo lo, dukaan sambhal lo.</h1>
+          <p style={{ margin: "0 0 4px", fontSize: "14px", color: "#6b7280" }}>Welcome back{shop?.ownerName ? ", " + shop.ownerName : ""}</p>
+          <h1 style={{ margin: 0, fontSize: "24px", fontWeight: 800, color: "var(--color-charcoal)" }}>Snap your ledger. Guard your shop.</h1>
         </div>
         {actions.map((a) => {
           const Icon = a.icon;

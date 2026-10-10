@@ -59,7 +59,7 @@ export default function LedgerPage() {
   return (
     <div className="page-content" style={{ backgroundColor: "var(--color-cream)" }}>
       <PageHeader
-        title="Khata / Ledger"
+        title="Ledger"
         shopName={shop?.shopName}
         action={
           <Link href="/scan" style={{ textDecoration: "none" }}>
@@ -88,10 +88,10 @@ export default function LedgerPage() {
           <div style={{ textAlign: "center", padding: "60px 24px" }}>
             <Users size={48} color="#d1d5db" style={{ margin: "0 auto 16px" }} />
             <p style={{ margin: "0 0 8px", fontSize: "17px", fontWeight: 600, color: "var(--color-charcoal)" }}>
-              Abhi koi entry nahi hai
+              No entries yet
             </p>
             <p style={{ margin: "0 0 24px", fontSize: "14px", color: "#6b7280" }}>
-              Khata photo scan karein ya manually entry karein
+              Scan a ledger photo or add an entry manually
             </p>
             <Link href="/scan">
               <button
@@ -109,7 +109,7 @@ export default function LedgerPage() {
                   cursor: "pointer",
                 }}
               >
-                <ScanLine size={18} /> Scan Karein
+                <ScanLine size={18} /> Scan Ledger
               </button>
             </Link>
           </div>

@@ -22,7 +22,7 @@ export default function StockPage() {
         </div>
         <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 700, color: "var(--color-charcoal)" }}>Coming Soon</h2>
         <p style={{ margin: 0, color: "#6b7280", fontSize: "14px", maxWidth: "240px" }}>
-          Shelf photo se stock automatically track karein - yeh feature jald aa raha hai!
+          Track your stock automatically from a shelf photo - this feature is coming soon!
         </p>
       </div>
       <BottomNav />

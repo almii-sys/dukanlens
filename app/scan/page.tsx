@@ -152,7 +152,7 @@ export default function ScanPage() {
         </Link>
         <div>
           <h1 style={{ margin: 0, fontSize: "18px", fontWeight: 700 }}>Smart Ledger Scan</h1>
-          <p style={{ margin: 0, fontSize: "12px", opacity: 0.8 }}>Khata photo se entry karein</p>
+          <p style={{ margin: 0, fontSize: "12px", opacity: 0.8 }}>Add entries from a ledger photo</p>
         </div>
       </header>
 
@@ -166,7 +166,7 @@ export default function ScanPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={previewUrl}
-              alt="Scanned khata"
+              alt="Scanned ledger"
               style={{ width: "100%", maxHeight: "220px", objectFit: "cover", display: "block" }}
             />
             <button
@@ -197,7 +197,7 @@ export default function ScanPage() {
               <AlertCircle size={20} color="#dc2626" style={{ flexShrink: 0, marginTop: "1px" }} />
               <div>
                 <p style={{ margin: "0 0 4px", fontWeight: 600, color: "#991b1b", fontSize: "15px" }}>
-                  Scan nahi ho saka
+                  Couldn&apos;t read this page
                 </p>
                 <p style={{ margin: 0, fontSize: "13px", color: "#7f1d1d" }}>{errorMsg}</p>
               </div>
@@ -219,10 +219,10 @@ export default function ScanPage() {
         {scanState === "done" && entries.length === 0 && (
           <Card style={{ padding: "24px", textAlign: "center" }}>
             <p style={{ margin: "0 0 6px", fontWeight: 600, color: "var(--color-charcoal)" }}>
-              Koi entry nahi mili
+              No entries found
             </p>
             <p style={{ margin: "0 0 16px", fontSize: "13px", color: "#6b7280" }}>
-              Photo mein khata entries nazar nahi aayi. Dobara try karein ya manually enter karein.
+              We couldn&apos;t find any ledger entries in this photo. Try again or enter them manually.
             </p>
             <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
               <Button variant="secondary" size="sm" onClick={handleRetry}>
@@ -327,7 +327,7 @@ export default function ScanPage() {
                                 value={entry.note ?? ""}
                                 onChange={(e) => updateEntry(entry._key, "note", e.target.value || null)}
                                 style={editInputStyle}
-                                placeholder="e.g. cheeni, ata, doodh"
+                                placeholder="e.g. sugar, flour, milk"
                               />
                             </div>
                           )}
@@ -346,8 +346,8 @@ export default function ScanPage() {
                               onChange={(e) => updateEntry(entry._key, "status", e.target.value)}
                               style={{ ...editInputStyle, fontSize: "12px", padding: "4px 8px" }}
                             >
-                              <option value="unpaid">Unpaid (Udhaar)</option>
-                              <option value="paid">Paid (Wasooli)</option>
+                              <option value="unpaid">Unpaid</option>
+                              <option value="paid">Paid</option>
                               <option value="unclear">Unclear</option>
                             </select>
                           </div>
@@ -363,16 +363,16 @@ export default function ScanPage() {
             {saved ? (
               <Card style={{ padding: "20px", textAlign: "center", border: "1px solid #6ee7b7", backgroundColor: "#f0fdf4" }}>
                 <CheckCircle2 size={32} color="#059669" style={{ margin: "0 auto 8px" }} />
-                <p style={{ margin: "0 0 4px", fontWeight: 700, color: "#065f46", fontSize: "16px" }}>Entries save ho gayi!</p>
+                <p style={{ margin: "0 0 4px", fontWeight: 700, color: "#065f46", fontSize: "16px" }}>Entries saved</p>
                 <p style={{ margin: "0 0 16px", fontSize: "13px", color: "#047857" }}>
-                  {includedCount} entries ledger mein add ho gayi hain.
+                  {includedCount} entries added to your ledger.
                 </p>
                 <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
                   <Link href="/ledger">
-                    <Button variant="primary" size="sm">Ledger Dekhen</Button>
+                    <Button variant="primary" size="sm">View Ledger</Button>
                   </Link>
                   <Button variant="secondary" size="sm" onClick={handleRetry}>
-                    Aur Scan Karein
+                    Scan Another
                   </Button>
                 </div>
               </Card>

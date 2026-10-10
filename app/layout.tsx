@@ -2,14 +2,14 @@
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DukaanLens — Aapki dukaan, aapki nazar",
-  description: "Smart khata aur stock management for Pakistani shop owners",
+  title: "Nigraan — Snap your ledger. Guard your shop.",
+  description: "Smart ledger and stock management for shop owners",
   manifest: "/manifest.json",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ur" dir="ltr">
+    <html lang="en" dir="ltr">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <meta name="theme-color" content="#0D7377" />

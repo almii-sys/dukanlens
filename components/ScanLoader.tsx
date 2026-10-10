@@ -10,7 +10,7 @@ export function ScanLoader({ previewUrl }: ScanLoaderProps) {
       <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(13,115,119,0.55)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "12px" }}>
         <div className="scan-line" style={{ position: "absolute", left: 0, right: 0, height: "2px", background: "linear-gradient(90deg, transparent 0%, rgba(244,162,97,0.9) 50%, transparent 100%)" }} />
         <Loader2 size={40} color="white" style={{ animation: "spin-slow 1s linear infinite" }} />
-        <p style={{ color: "white", fontWeight: 600, fontSize: "15px", margin: 0 }}>Reading your khata...</p>
+        <p style={{ color: "white", fontWeight: 600, fontSize: "15px", margin: 0 }}>Reading your ledger...</p>
         <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "13px", margin: 0 }}>Powered by AI - this may take a moment</p>
       </div>
     </div>

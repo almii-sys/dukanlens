@@ -18,7 +18,7 @@ export default function SettingsPage() {
 
   function handleReset() {
     if (!shop) return;
-    if (window.confirm(shop.shopName + " ka sara data delete ho jayega. Sure hain?")) {
+    if (window.confirm("All data for " + shop.shopName + " will be deleted. Are you sure?")) {
       deleteShop(shop.id);
       router.replace("/onboarding");
     }
@@ -47,14 +47,14 @@ export default function SettingsPage() {
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <Settings size={18} color="#6b7280" />
             <div>
-              <p style={{ margin: 0, fontWeight: 600, fontSize: "14px", color: "var(--color-charcoal)" }}>DukaanLens v0.1</p>
-              <p style={{ margin: 0, fontSize: "12px", color: "#9ca3af" }}>Aapki dukaan, aapki nazar</p>
+              <p style={{ margin: 0, fontWeight: 600, fontSize: "14px", color: "var(--color-charcoal)" }}>Nigraan v0.1</p>
+              <p style={{ margin: 0, fontSize: "12px", color: "#9ca3af" }}>Snap your ledger. Guard your shop.</p>
             </div>
           </div>
         </Card>
         <Card onClick={handleReset} style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: "12px", cursor: "pointer", border: "1px solid #fca5a5", backgroundColor: "#fff5f5" }}>
           <Trash2 size={18} color="#dc2626" />
-          <p style={{ margin: 0, fontWeight: 600, fontSize: "14px", color: "#dc2626" }}>Shop data delete karein</p>
+          <p style={{ margin: 0, fontWeight: 600, fontSize: "14px", color: "#dc2626" }}>Delete shop data</p>
         </Card>
       </div>
       <BottomNav />

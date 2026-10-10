@@ -2,8 +2,8 @@
 inclusion: always
 ---
 
-# Product: DukaanLens — camera-first assistant for kiryana shops
-Tagline: "Bas photo lo, dukaan sambhal lo." (Just take a photo, the shop is handled.)
+# Product: Nigraan — camera-first assistant for kiryana shops
+Tagline: "Snap your ledger. Guard your shop."
 Track: Retail & Commerce.
 
 ## The problem

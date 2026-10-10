@@ -23,7 +23,7 @@ export function CameraUpload({ onFile, disabled, previewUrl }: CameraUploadProps
     return (
       <div style={{ position: "relative", borderRadius: "12px", overflow: "hidden" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={previewUrl} alt="Khata register preview" style={{ width: "100%", maxHeight: "320px", objectFit: "cover", display: "block" }} />
+        <img src={previewUrl} alt="Ledger register preview" style={{ width: "100%", maxHeight: "320px", objectFit: "cover", display: "block" }} />
       </div>
     );
   }
@@ -33,7 +33,7 @@ export function CameraUpload({ onFile, disabled, previewUrl }: CameraUploadProps
       <div style={{ width: "64px", height: "64px", borderRadius: "50%", backgroundColor: "#e0f2f2", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <ImageIcon size={28} color="var(--color-teal)" />
       </div>
-      <p style={{ margin: 0, color: "#6b7280", fontSize: "14px", textAlign: "center" }}>Take a photo of your khata register or upload from gallery</p>
+      <p style={{ margin: 0, color: "#6b7280", fontSize: "14px", textAlign: "center" }}>Take a photo of your ledger register or upload from gallery</p>
       <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", justifyContent: "center" }}>
         <button disabled={disabled} onClick={() => cameraRef.current?.click()} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 20px", backgroundColor: "var(--color-teal)", color: "white", border: "none", borderRadius: "10px", fontSize: "14px", fontWeight: 600, cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.6 : 1 }}>
           <Camera size={18} /> Take Photo
