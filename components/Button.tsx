@@ -37,9 +37,9 @@ const VARIANT_STYLES: Record<Variant, React.CSSProperties> = {
 };
 
 const SIZE_STYLES: Record<Size, React.CSSProperties> = {
-  sm: { padding: "6px 14px", fontSize: "13px", borderRadius: "8px" },
-  md: { padding: "10px 20px", fontSize: "15px", borderRadius: "10px" },
-  lg: { padding: "14px 24px", fontSize: "16px", borderRadius: "12px" },
+  sm: { padding: "8px 14px", fontSize: "13px", borderRadius: "10px", minHeight: "36px" },
+  md: { padding: "11px 20px", fontSize: "15px", borderRadius: "12px", minHeight: "44px" },
+  lg: { padding: "14px 24px", fontSize: "16px", borderRadius: "14px", minHeight: "52px" },
 };
 
 export function Button({
@@ -52,23 +52,35 @@ export function Button({
   style,
   ...props
 }: ButtonProps) {
+  const isDisabled = disabled || loading;
   return (
     <button
-      disabled={disabled || loading}
+      disabled={isDisabled}
       style={{
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
         gap: "8px",
         fontWeight: 600,
-        cursor: disabled || loading ? "not-allowed" : "pointer",
-        opacity: disabled || loading ? 0.6 : 1,
-        transition: "opacity 0.15s, transform 0.1s",
+        fontFamily: "inherit",
+        lineHeight: 1,
+        cursor: isDisabled ? "not-allowed" : "pointer",
+        opacity: isDisabled ? 0.55 : 1,
+        transition: "opacity 0.15s ease, transform 0.1s ease, filter 0.15s ease, box-shadow 0.15s ease",
         width: fullWidth ? "100%" : undefined,
         WebkitTapHighlightColor: "transparent",
         ...VARIANT_STYLES[variant],
         ...SIZE_STYLES[size],
         ...style,
+      }}
+      onMouseDown={(e) => {
+        if (!isDisabled) e.currentTarget.style.transform = "scale(0.97)";
+      }}
+      onMouseUp={(e) => {
+        e.currentTarget.style.transform = "scale(1)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "scale(1)";
       }}
       {...props}
     >

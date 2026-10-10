@@ -14,7 +14,7 @@ export default function StockPage() {
   }, []);
 
   return (
-    <div className="page-content" style={{ backgroundColor: "var(--color-cream)" }}>
+    <div className="page-content page-enter" style={{ backgroundColor: "var(--color-cream)" }}>
       <PageHeader title="Stock Scanner" shopName={shop?.shopName} />
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 32px", textAlign: "center", gap: "16px" }}>
         <div style={{ width: "72px", height: "72px", borderRadius: "20px", backgroundColor: "#fef3e0", display: "flex", alignItems: "center", justifyContent: "center" }}>

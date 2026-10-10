@@ -14,6 +14,7 @@ export function PageHeader({ title, subtitle, action, shopName }: PageHeaderProp
         backgroundColor: "var(--color-teal)",
         color: "white",
         padding: "16px 20px",
+        paddingTop: "calc(16px + var(--safe-top))",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",

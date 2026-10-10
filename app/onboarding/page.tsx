@@ -58,8 +58,8 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", backgroundColor: "var(--color-cream)" }}>
-      <div style={{ backgroundColor: "var(--color-teal)", padding: "40px 24px 32px", color: "white", textAlign: "center" }}>
+    <div className="page-enter" style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", backgroundColor: "var(--color-cream)" }}>
+      <div style={{ backgroundColor: "var(--color-teal)", padding: "40px 24px 32px", paddingTop: "calc(40px + var(--safe-top))", color: "white", textAlign: "center" }}>
         <div style={{ width: "64px", height: "64px", backgroundColor: "rgba(255,255,255,0.15)", borderRadius: "20px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
           <Store size={32} color="white" />
         </div>
@@ -106,8 +106,8 @@ export default function OnboardingPage() {
           </form>
         )}
       </div>
-      <div style={{ padding: "16px 24px 32px", display: "flex", justifyContent: "center", gap: "8px" }}>
-        {[1, 2].map((s) => (<div key={s} style={{ width: s === step ? "24px" : "8px", height: "8px", borderRadius: "4px", backgroundColor: s === step ? "var(--color-teal)" : "#d1d5db", transition: "width 0.2s" }} />))}
+      <div style={{ padding: "16px 24px", paddingBottom: "calc(32px + var(--safe-bottom))", display: "flex", justifyContent: "center", gap: "8px" }}>
+        {[1, 2].map((s) => (<div key={s} style={{ width: s === step ? "24px" : "8px", height: "8px", borderRadius: "4px", backgroundColor: s === step ? "var(--color-teal)" : "#d1d5db", transition: "width 0.2s ease" }} />))}
       </div>
     </div>
   );

@@ -157,9 +157,9 @@ export default function ScanPage() {
   const includedCount = entries.filter((e) => e._include).length;
 
   return (
-    <div className="page-content" style={{ backgroundColor: "var(--color-cream)" }}>
+    <div className="page-content page-enter" style={{ backgroundColor: "var(--color-cream)" }}>
       {/* Header */}
-      <header style={{ backgroundColor: "var(--color-teal)", padding: "16px 20px", color: "white", display: "flex", alignItems: "center", gap: "12px" }}>
+      <header style={{ backgroundColor: "var(--color-teal)", padding: "16px 20px", paddingTop: "calc(16px + var(--safe-top))", color: "white", display: "flex", alignItems: "center", gap: "12px", position: "sticky", top: 0, zIndex: 40 }}>
         <Link href="/" style={{ color: "white", display: "flex" }}>
           <ChevronLeft size={24} />
         </Link>

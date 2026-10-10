@@ -6,16 +6,18 @@ import Link from "next/link";
 import {
   ChevronLeft, Phone, MessageCircle, CreditCard,
   ShieldCheck, AlertTriangle, ShieldAlert,
-  History, Send, X, CheckCircle2
+  History, Send, X, CheckCircle2, Share2
 } from "lucide-react";
 import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
 import { Button } from "@/components/Button";
+import { PageLoader } from "@/components/PageLoader";
 import {
   getActiveShop, getCustomer, getEntriesForCustomer,
   computeTrustScore, recordPayment, updateCustomerPhone,
   incrementReminderCount,
 } from "@/lib/storage";
+import { shareStatement } from "@/lib/statement";
 import type { Customer, LedgerEntry, TrustScore, ShopProfile } from "@/lib/types";
 
 function buildWhatsAppMessage(customer: Customer, shopName: string) {
@@ -26,7 +28,7 @@ function buildWhatsAppMessage(customer: Customer, shopName: string) {
 
 export default function CustomerDetailPage() {
   return (
-    <Suspense fallback={<div className="page-content" style={{ backgroundColor: "var(--color-cream)" }} />}>
+    <Suspense fallback={<PageLoader />}>
       <CustomerDetailContent />
     </Suspense>
   );
@@ -57,6 +59,9 @@ function CustomerDetailContent() {
   const [reminderMsg, setReminderMsg] = useState<{ english: string; urdu: string } | null>(null);
   const [activeMsg, setActiveMsg] = useState<"english" | "urdu">("english");
 
+  // Share statement
+  const [sharing, setSharing] = useState(false);
+
   function reload() {
     const profile = getActiveShop();
     if (!profile) { router.replace("/onboarding"); return; }
@@ -73,7 +78,7 @@ function CustomerDetailContent() {
 
   useEffect(() => { reload(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!ready || !customer || !shop) return null;
+  if (!ready || !customer || !shop) return <PageLoader />;
 
   function handlePayment(e: React.FormEvent) {
     e.preventDefault();
@@ -122,6 +127,19 @@ function CustomerDetailContent() {
     setShowReminder(false);
   }
 
+  async function handleShareStatement() {
+    if (!shop || !customer || sharing) return;
+    setSharing(true);
+    try {
+      await shareStatement(shop, customer, entries);
+    } catch (err) {
+      console.error("Share statement failed:", err);
+      window.alert("Could not create the statement. Please try again.");
+    } finally {
+      setSharing(false);
+    }
+  }
+
   const trustIcon = trust?.label === "Reliable"
     ? <ShieldCheck size={18} color="#059669" />
     : trust?.label === "Watch"
@@ -133,9 +151,9 @@ function CustomerDetailContent() {
   const trustColor = trust?.label === "Reliable" ? "#065f46" : trust?.label === "Watch" ? "#92400e" : "#991b1b";
 
   return (
-    <div className="page-content" style={{ backgroundColor: "var(--color-cream)" }}>
+    <div className="page-content page-enter" style={{ backgroundColor: "var(--color-cream)" }}>
       {/* Header */}
-      <header style={{ backgroundColor: "var(--color-teal)", padding: "16px 20px", color: "white" }}>
+      <header style={{ backgroundColor: "var(--color-teal)", padding: "16px 20px", paddingTop: "calc(16px + var(--safe-top))", color: "white" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
           <Link href="/ledger" style={{ color: "white", display: "flex" }}>
             <ChevronLeft size={24} />
@@ -180,6 +198,16 @@ function CustomerDetailContent() {
               <Send size={16} /> Send Reminder
             </Button>
           </div>
+          <Button
+            variant="ghost"
+            size="md"
+            fullWidth
+            loading={sharing}
+            onClick={handleShareStatement}
+            style={{ marginTop: "10px" }}
+          >
+            <Share2 size={16} /> Share Statement
+          </Button>
         </Card>
 
         {/* Trust Score */}
@@ -403,8 +431,10 @@ function ModalOverlay({ children, onClose }: { children: React.ReactNode; onClos
           backgroundColor: "white",
           borderRadius: "20px 20px 0 0",
           padding: "24px 20px 32px",
+          paddingBottom: "calc(32px + var(--safe-bottom))",
           maxHeight: "90dvh",
           overflowY: "auto",
+          animation: "fade-in-up 0.22s ease both",
         }}
         onClick={(e) => e.stopPropagation()}
       >

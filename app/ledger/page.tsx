@@ -6,8 +6,10 @@ import Link from "next/link";
 import { ScanLine, ChevronRight, Users, AlertCircle } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
 import { PageHeader } from "@/components/PageHeader";
+import { PageLoader } from "@/components/PageLoader";
 import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
+import { Button } from "@/components/Button";
 import { getActiveShop, getCustomers, getLedgerEntries, computeTrustScore } from "@/lib/storage";
 import type { Customer, ShopProfile } from "@/lib/types";
 
@@ -48,7 +50,7 @@ export default function LedgerPage() {
     load();
   }, [load]);
 
-  if (!ready) return null;
+  if (!ready) return <PageLoader />;
 
   const trustBadgeVariant = (label: CustomerWithScore["trustLabel"]) => {
     if (label === "Reliable") return "green" as const;
@@ -57,7 +59,7 @@ export default function LedgerPage() {
   };
 
   return (
-    <div className="page-content" style={{ backgroundColor: "var(--color-cream)" }}>
+    <div className="page-content page-enter" style={{ backgroundColor: "var(--color-cream)" }}>
       <PageHeader
         title="Ledger"
         shopName={shop?.shopName}
@@ -93,24 +95,10 @@ export default function LedgerPage() {
             <p style={{ margin: "0 0 24px", fontSize: "14px", color: "#6b7280" }}>
               Scan a ledger photo or add an entry manually
             </p>
-            <Link href="/scan">
-              <button
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "12px 24px",
-                  backgroundColor: "var(--color-teal)",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "10px",
-                  fontSize: "15px",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                }}
-              >
+            <Link href="/scan" style={{ textDecoration: "none" }}>
+              <Button variant="primary" size="md">
                 <ScanLine size={18} /> Scan Ledger
-              </button>
+              </Button>
             </Link>
           </div>
         ) : (

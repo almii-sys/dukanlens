@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Settings, Store, Trash2, ChevronRight } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
 import { PageHeader } from "@/components/PageHeader";
+import { PageLoader } from "@/components/PageLoader";
 import { Card } from "@/components/Card";
 import { getActiveShop, deleteShop } from "@/lib/storage";
 import type { ShopProfile } from "@/lib/types";
@@ -12,8 +13,10 @@ import type { ShopProfile } from "@/lib/types";
 export default function SettingsPage() {
   const router = useRouter();
   const [shop, setShop] = useState<ShopProfile | null>(null);
+  const [ready, setReady] = useState(false);
   useEffect(() => {
     setShop(getActiveShop());
+    setReady(true);
   }, []);
 
   function handleReset() {
@@ -24,8 +27,10 @@ export default function SettingsPage() {
     }
   }
 
+  if (!ready) return <PageLoader />;
+
   return (
-    <div className="page-content" style={{ backgroundColor: "var(--color-cream)" }}>
+    <div className="page-content page-enter" style={{ backgroundColor: "var(--color-cream)" }}>
       <PageHeader title="Settings" shopName={shop?.shopName} />
       <div style={{ padding: "20px 16px", display: "flex", flexDirection: "column", gap: "12px" }}>
         {shop && (

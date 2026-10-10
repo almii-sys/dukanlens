@@ -1,4 +1,6 @@
-﻿import React from "react";
+﻿"use client";
+
+import React from "react";
 
 interface CardProps {
   children: React.ReactNode;
@@ -8,20 +10,37 @@ interface CardProps {
 }
 
 export function Card({ children, style, className, onClick }: CardProps) {
+  const interactive = Boolean(onClick);
   return (
     <div
       className={className}
       onClick={onClick}
       style={{
         backgroundColor: "white",
-        borderRadius: "12px",
-        border: "1px solid #f0f0f0",
-        boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+        borderRadius: "var(--radius-card)",
+        border: "1px solid var(--border-subtle)",
+        boxShadow: "var(--shadow-card)",
         overflow: "hidden",
-        cursor: onClick ? "pointer" : undefined,
-        transition: onClick ? "box-shadow 0.15s" : undefined,
+        cursor: interactive ? "pointer" : undefined,
+        transition: "box-shadow 0.18s ease, transform 0.18s ease",
         ...style,
       }}
+      onMouseEnter={
+        interactive
+          ? (e) => {
+              e.currentTarget.style.boxShadow = "var(--shadow-card-hover)";
+              e.currentTarget.style.transform = "translateY(-1px)";
+            }
+          : undefined
+      }
+      onMouseLeave={
+        interactive
+          ? (e) => {
+              e.currentTarget.style.boxShadow = "var(--shadow-card)";
+              e.currentTarget.style.transform = "translateY(0)";
+            }
+          : undefined
+      }
     >
       {children}
     </div>
