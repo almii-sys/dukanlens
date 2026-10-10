@@ -1,3 +1,4 @@
+export const maxDuration = 60;
 import { callGemini } from "@/lib/gemini";
 
 const PROMPT = `You are reading a photo of a handwritten shop credit register (khata) from a small shop.
