@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nigraan
 
-## Getting Started
+**Snap your ledger. Guard your shop.**
 
-First, run the development server:
+🔗 **Live demo:** [nigraan-zeta.vercel.app](https://nigraan-zeta.vercel.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## The problem
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Small kiryana and general stores run on paper registers and memory. Credit (udhaar) given to customers is written in a handwritten register and often forgotten or never collected. Fraud and double-entries slip through unnoticed, and shopkeepers have no clear picture of their own financial health. Existing apps demand that every entry be typed in — so busy shopkeepers never adopt them and stay on paper.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## The solution
 
-## Learn More
+Nigraan is a camera-first assistant for shopkeepers. Instead of typing, the shopkeeper photographs the register they already keep, and AI turns it into a digital ledger — then layers on fraud detection, collection reminders, and a credit-health profile. Zero typing to get started, and every AI-read value stays editable.
 
-To learn more about Next.js, take a look at the following resources:
+## Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Smart Ledger Scan** — Photograph a handwritten register page and Gemini Vision reads each entry (customer name, amount, date, item note, paid/unpaid mark), handling Urdu, Roman Urdu, English or mixed scripts. Low-confidence cells are highlighted for a quick review before saving.
+- **Fraud & Anomaly Alerts** — Local checks flag duplicate entries, sudden spikes above a customer's usual credit, unusually large entries, missing amounts, and payments larger than what's owed — each with a severity and a one-line reason.
+- **Shop Health Score** — A single 0–100 score (Healthy / Needs Attention / At Risk) built from credit recovered, overdue balances, high-risk customers, and open fraud flags, with a one-line tip to raise it. A credit profile for future loans.
+- **Customer Trust Score** — Every customer gets a Reliable / Watch / High Risk rating based on amount owed, age of the oldest unpaid entry, reminders sent, and payment history.
+- **WhatsApp Reminders** — Send polite payment reminders in English or Urdu through a `wa.me` link; the customer's number is asked once and remembered.
+- **Shareable Statements** — Generate a clean account statement image on-device and share it via the Web Share API on mobile, or download it as a PNG on desktop.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tech stack
 
-## Deploy on Vercel
+- **Next.js** (App Router) + TypeScript + Tailwind CSS — one app, mobile-first, installable as a PWA
+- **Google Gemini** (via the official `@google/genai` SDK) for handwriting recognition, called only in server route handlers with structured JSON output
+- **Vercel** for hosting and deployment
+- **localStorage** for all data, namespaced per shop — customer credit stays on the device
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Built with Kiro
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Nigraan was built end-to-end with Kiro, using its workflow features to stay fast and consistent:
+
+- **Steering files** — `.kiro/steering/product.md`, `tech.md`, and `design.md` captured the product vision, tech stack rules, and design system up front, so every generated screen followed the same colors, components, and conventions.
+- **Quick Spec** — Features were scoped and built from short specs that turned high-level intent (app shell, onboarding, ledger scan, FYP features) into concrete, buildable tasks.
+- **API safety hook** — An agent hook guards the Gemini integration, keeping API keys server-side only, enforcing friendly error handling and key fallback, and verifying the structured response schema on the `/api/khata` route.
+
+## Roadmap
+
+- **Voice entry** — "Ali ko 500 ka udhaar, cheeni" → an entry, hands-free
+- **Cash-flow forecasting** — project collections and shortfalls from ledger history
+- **Shelf Scan** — photograph a shelf to detect low/empty stock and draft a restock order
+- **Cloud sync** — accounts and multi-device sync (today data lives on the device)
+- **Lending partners** — turn the Shop Health Score into a credit profile that unlocks working-capital loans
